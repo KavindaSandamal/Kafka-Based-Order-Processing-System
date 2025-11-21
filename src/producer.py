@@ -33,9 +33,9 @@ class OrderProducer:
     def delivery_report(self, err, msg):
         """Callback for message delivery reports"""
         if err is not None:
-            print(f'❌ Message delivery failed: {err}')
+            print(f' Message delivery failed: {err}')
         else:
-            print(f'✅ Message delivered to {msg.topic()} [{msg.partition()}] at offset {msg.offset()}')
+            print(f' Message delivered to {msg.topic()} [{msg.partition()}] at offset {msg.offset()}')
     
     def produce_order(self, order_id):
         """Produce a single order message"""
@@ -60,21 +60,21 @@ class OrderProducer:
         # Flush to ensure delivery
         self.producer.poll(0)
         
-        print(f"📤 Produced: Order {order_data['orderId']} - {order_data['product']} - ${order_data['price']}")
+        print(f" Produced: Order {order_data['orderId']} - {order_data['product']} - ${order_data['price']}")
         return order_data
     
     def produce_batch(self, num_orders=10, interval=1):
         """Produce multiple orders with interval"""
-        print(f"\n🚀 Starting to produce {num_orders} orders...\n")
+        print(f"\n Starting to produce {num_orders} orders...\n")
         
         for i in range(1, num_orders + 1):
             self.produce_order(1000 + i)
             time.sleep(interval)
         
         # Wait for all messages to be delivered
-        print("\n⏳ Flushing remaining messages...")
+        print("\n Flushing remaining messages...")
         self.producer.flush()
-        print("✨ All messages sent!\n")
+        print(" All messages sent!\n")
     
     def close(self):
         """Close the producer"""
@@ -87,7 +87,7 @@ if __name__ == '__main__':
         # Produce 20 orders with 2 second intervals
         producer.produce_batch(num_orders=20, interval=2)
     except KeyboardInterrupt:
-        print("\n⚠️  Producer interrupted by user")
+        print("\n  Producer interrupted by user")
     finally:
         producer.close()
-        print("👋 Producer closed")
+        print(" Producer closed!")
