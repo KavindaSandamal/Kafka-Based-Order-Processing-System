@@ -35,7 +35,7 @@ class OrderConsumer:
         
         # Retry configuration
         self.max_retries = 3
-        self.retry_delay = 2  # seconds
+        self.retry_delay = 2  
         
     def deserialize_avro(self, avro_bytes):
         """Deserialize Avro bytes to order data"""
@@ -72,7 +72,7 @@ class OrderConsumer:
             headers=new_headers
         )
         self.producer.flush()
-        print(f"🔄 Sent to retry queue (attempt {retry_count}/{self.max_retries})")
+        print(f"  Sent to retry queue (attempt {retry_count}/{self.max_retries})")
     
     def send_to_dlq(self, key, value, headers, error_msg):
         """Send permanently failed message to DLQ"""
@@ -87,7 +87,7 @@ class OrderConsumer:
             headers=dlq_headers
         )
         self.producer.flush()
-        print(f"💀 Sent to Dead Letter Queue: {error_msg}")
+        print(f"  Sent to Dead Letter Queue: {error_msg}")
     
     def process_message(self, order_data):
         """Process order message - simulates potential failures"""
@@ -98,10 +98,10 @@ class OrderConsumer:
         # Process successfully
         self.update_aggregation(order_data['price'])
         
-        print(f"\n✅ Processed Order {order_data['orderId']}")
+        print(f"\n Processed Order {order_data['orderId']}")
         print(f"   Product: {order_data['product']}")
         print(f"   Price: ${order_data['price']:.2f}")
-        print(f"   📊 Running Average: ${self.running_average:.2f} ({self.order_count} orders)")
+        print(f"    Running Average: ${self.running_average:.2f} ({self.order_count} orders)")
     
     def consume_messages(self):
         """Main consumer loop"""
@@ -122,7 +122,7 @@ class OrderConsumer:
                     if msg.error().code() == KafkaError._PARTITION_EOF:
                         continue
                     else:
-                        print(f"❌ Consumer error: {msg.error()}")
+                        print(f" Consumer error: {msg.error()}")
                         continue
                 
                 # Get retry count from headers
@@ -141,7 +141,7 @@ class OrderConsumer:
                     
                 except Exception as e:
                     error_msg = str(e)
-                    print(f"\n⚠️  Processing failed: {error_msg}")
+                    print(f"\n  Processing failed: {error_msg}")
                     
                     if retry_count < self.max_retries:
                         # Send to retry queue
@@ -170,17 +170,17 @@ class OrderConsumer:
                     print("=" * 60)
                 
         except KeyboardInterrupt:
-            print("\n\n⚠️  Consumer interrupted by user")
+            print("\n\n Consumer interrupted by user")
         finally:
             self.close()
     
     def close(self):
         """Close consumer and producer"""
-        print("\n📊 Final Statistics:")
+        print("\nFinal Statistics:")
         print(f"   Total Orders Processed: {self.order_count}")
         print(f"   Total Revenue: ${self.total_price:.2f}")
         print(f"   Average Order Value: ${self.running_average:.2f}")
-        print("\n👋 Closing consumer...")
+        print("\nClosing consumer...")
         self.consumer.close()
         self.producer.flush()
 
