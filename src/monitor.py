@@ -55,7 +55,7 @@ class DLQMonitor:
                     if msg.error().code() == KafkaError._PARTITION_EOF:
                         continue
                     else:
-                        print(f"❌ Error: {msg.error()}")
+                        print(f" Error: {msg.error()}")
                         continue
                 
                 self.dlq_count += 1
@@ -65,7 +65,7 @@ class DLQMonitor:
                 headers = self.extract_headers(msg.headers())
                 
                 # Display failed message details
-                print(f"\n💀 DLQ Message #{self.dlq_count}")
+                print(f"\n DLQ Message #{self.dlq_count}")
                 print(f"{'─' * 80}")
                 print(f"Order ID:      {order_data['orderId']}")
                 print(f"Product:       {order_data['product']}")
@@ -87,8 +87,8 @@ class DLQMonitor:
                 self.consumer.commit(msg)
                 
         except KeyboardInterrupt:
-            print(f"\n\n📊 Total DLQ Messages: {self.dlq_count}")
-            print("👋 Monitor stopped")
+            print(f"\n\n Total DLQ Messages: {self.dlq_count}")
+            print(" Monitor stopped")
         finally:
             self.consumer.close()
 
